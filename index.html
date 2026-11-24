@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ร้านขายยาสีฟันสมุนไพร & ฟลูออไรด์</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f4f7f6; }
+    .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    img { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; }
+    .product { display: flex; gap: 15px; align-items: center; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0 12px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background: #0070f3; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #005bb5; }
+  </style>
+</head>
+<body>
+
+  <h2>🦷 สั่งซื้อยาสีฟันออนไลน์</h2>
+
+  <!-- สินค้า SKU 1 -->
+  <div class="card product">
+    <img src="images/sku1.jpg" alt="ยาสีฟันสูตรเย็น">
+    <div>
+      <h3>SKU-01: ยาสีฟันสูตรเย็นสดชื่น</h3>
+      <p>ราคา: 120 บาท</p>
+      จำนวน: <input type="number" id="sku1" value="0" min="0" style="width: 70px;">
+    </div>
+  </div>
+
+  <!-- สินค้า SKU 2 -->
+  <div class="card product">
+    <img src="images/sku2.jpg" alt="ยาสีฟันสมุนไพร">
+    <div>
+      <h3>SKU-02: ยาสีฟันสมุนไพรเข้มข้น</h3>
+      <p>ราคา: 150 บาท</p>
+      จำนวน: <input type="number" id="sku2" value="0" min="0" style="width: 70px;">
+    </div>
+  </div>
+
+  <!-- ฟอร์มกรอกข้อมูลจัดส่ง -->
+  <div class="card">
+    <h3>📦 ข้อมูลสำหรับจัดส่งและจ่าหน้าพัสดุ</h3>
+    <label>ชื่อ-นามสกุลผู้รับ:</label>
+    <input type="text" id="name" required placeholder="เช่น นายสมชาย ใจดี">
+    
+    <label>เบอร์โทรศัพท์:</label>
+    <input type="tel" id="phone" required placeholder="เช่น 0812345678">
+    
+    <label>ที่อยู่จัดส่ง (พร้อมรหัสไปรษณีย์):</label>
+    <textarea id="address" rows="3" required placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea>
+
+    <button onclick="submitOrder()">ยืนยันการสั่งซื้อ</button>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxA_hCLEZQHjbtq5oi-h1xlx07YQEE2UPo3uS-XbFTcn4swXq3HVngb2OU3V1C4g800/exec";
+
+    function submitOrder() {
+      const s1 = parseInt(document.getElementById('sku1').value) || 0;
+      const s2 = parseInt(document.getElementById('sku2').value) || 0;
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+
+      if (!name || !phone || !address || (s1 === 0 && s2 === 0)) {
+        alert("กรุณากรอกข้อมูลจัดส่งและเลือกสินค้าอย่างน้อย 1 ชิ้น");
+        return;
+      }
+
+      const total = (s1 * 120) + (s2 * 150);
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({ name, phone, address, sku1: s1, sku2: s2, total })
+      })
+      .then(() => {
+        alert("สั่งซื้อสำเร็จ! ข้อมูลถูกบันทึกเข้าระบบแพ็คสินค้าแล้ว");
+        document.getElementById('sku1').value = 0;
+        document.getElementById('sku2').value = 0;
+        document.getElementById('name').value = "";
+        document.getElementById('phone').value = "";
+        document.getElementById('address').value = "";
+      })
+      .catch(err => alert("เกิดข้อผิดพลาด: " + err));
+    }
+  </script>
+
+</body>
+</html>
